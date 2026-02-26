@@ -24,5 +24,8 @@
     <ClCompile Include="StudyThread3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="StudyThread.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

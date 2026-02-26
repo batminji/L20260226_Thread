@@ -1,3 +1,5 @@
+// 데드락이 발생하는 상태
+
 #include <iostream>
 #include <thread>
 #include <mutex>

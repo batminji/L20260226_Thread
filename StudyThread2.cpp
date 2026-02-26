@@ -1,4 +1,6 @@
-﻿#include <iostream>
+﻿// 뮤텍스
+
+#include <iostream>
 #include <thread>
 #include <vector>
 #include <mutex>

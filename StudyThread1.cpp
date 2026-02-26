@@ -1,4 +1,6 @@
-﻿#include <iostream>
+﻿// 스레드
+
+#include <iostream>
 #include <thread>
 #include <vector>
 #include <cstdio>
