@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <mutex>
 #include <thread>
 
@@ -25,6 +25,8 @@ void Worker2(std::mutex& m1, std::mutex& m2)
 			m2.lock();
 
 			if (!m1.try_lock())
+				// try_lock 함수는 lock 할 수 있다면 true를,
+				// lock 할 수 없다면 false를 리턴합니다.
 			{
 				m2.unlock();
 				continue;
@@ -47,8 +49,12 @@ int main()
 	std::thread t1(Worker1, std::ref(m1), std::ref(m2));
 	std::thread t2(Worker2, std::ref(m1), std::ref(m2));
 
+	// 1. 중첩된 lock을 사용하는 것을 피해라.
+	// 2. lock을 소유하고 있을 때 유저 코드를 호출하는 것을 피해라.
+	// 3. lock들은 언제나 정해진 순서로 획득해라.
+
 	t1.join();
 	t2.join();
 
-	std::cout << "��\n";
+	std::cout << "끝\n";
 }
