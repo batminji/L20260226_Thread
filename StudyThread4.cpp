@@ -1,4 +1,6 @@
-﻿#include <iostream>
+﻿// try_lock - 데드락 해결
+
+#include <iostream>
 #include <mutex>
 #include <thread>
 

@@ -24,7 +24,10 @@
     <ClCompile Include="StudyThread3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="StudyThread.cpp">
+    <ClCompile Include="StudyThread4.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StudyThread5.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
