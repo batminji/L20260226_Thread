@@ -37,8 +37,15 @@ void Consumer(std::queue<std::string>& DownloadedPages, std::mutex& m, int& NumP
 		// 어떤 조건이 참이 될 때까지 기다릴지 조건을 인자로 전달한다.
 		// 해당 조건이 false를 return 한다면, lk를 unlock 한 뒤에 영원히 sleep한다.
 		// 해당 조건이 true라면 cv.wait는 그대로 return해서 Consumer의 content를 처리하는 부분이 그대로 실행된다.
-		cv.wait(lk, [&]() {return !DownloadedPages.empty() || NumProcessed == 25; });
-		
+		// cv.wait(lk, [&]() {return !DownloadedPages.empty() || NumProcessed == 25; });
+		// cv.wait_for(lk, std::chrono::seconds(5), [&]() {return !DownloadedPages.empty() || NumProcessed == 25; });
+		// wait_for 함수
+		// 상대적 시간을 인자로 더 받는다.
+		auto DeadLine = std::chrono::steady_clock::now() + std::chrono::seconds(100);
+		cv.wait_until(lk, DeadLine, [&]() {return !DownloadedPages.empty() || NumProcessed == 25; });
+		// wait_until 함수
+		// 특정 시각까지 기다리는 인자를 더 받는다.
+
 		if (NumProcessed == 25)
 		{
 			lk.unlock();
