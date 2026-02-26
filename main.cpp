@@ -1,8 +1,10 @@
-#include <iostream>
+ï»¿#include <iostream>
 #include <thread>
 #include <vector>
 #include <cstdio>
 
+// ì“°ë ˆë“œëŠ” Return ê°’ì´ë€ ê²ƒì´ ì—†ë‹¤.
+// ì–´ë–¤ ê²°ê³¼ë¥¼ ë°˜í™˜í•˜ê³  ì‹¶ë‹¤ë©´ í¬ì¸í„°ì˜ í˜•íƒœë¡œ ì „ë‹¬í•˜ë©´ ë¨.
 void Worker(std::vector<int>::iterator start, std::vector<int>::iterator end, int* result)
 {
 	int Sum = 0;
@@ -13,8 +15,8 @@ void Worker(std::vector<int>::iterator start, std::vector<int>::iterator end, in
 	*result = Sum;
 
 	std::thread::id ID = std::this_thread::get_id();
-	// std::cout << "¾²·¡µå " << ID << "¿¡¼­ " << *start << "ºÎÅÍ" << *(end - 1) << "±îÁö °è»êÇÑ °á°ú : " << Sum << '\n';
-	printf("¾²·¹µå %x ¿¡¼­ %d ºÎÅÍ %d ±îÁö °è»êÇÑ °á°ú : %d \n", ID, *start,
+	// std::cout << "ì“°ë˜ë“œ " << ID << "ì—ì„œ " << *start << "ë¶€í„°" << *(end - 1) << "ê¹Œì§€ ê³„ì‚°í•œ ê²°ê³¼ : " << Sum << '\n';
+	printf("ì“°ë ˆë“œ %x ì—ì„œ %d ë¶€í„° %d ê¹Œì§€ ê³„ì‚°í•œ ê²°ê³¼ : %d \n", ID, *start,
 		*(end - 1), Sum);
 }
 
@@ -31,7 +33,10 @@ int main()
 	std::vector<std::thread> Workers;
 	for (int i = 0; i < 4; ++i)
 	{
-		Workers.push_back(std::thread(Worker, Data.begin() + i * 2500, Data.begin() + (i + 1) * 2500, &PartialSumResult[i]));
+		// thread ìƒì„±ìì˜ ì²« ë²ˆì§¸ ì¸ìë¡œ í•¨ìˆ˜ë¥¼ ì „ë‹¬í•˜ê³ ,
+		// ì´ì–´ì„œ í•´ë‹¹ í•¨ìˆ˜ì— ì „ë‹¬í•  ì¸ìë“¤ì„ ë‚˜ì—´í•œë‹¤.
+		std::thread Temp(Worker, Data.begin() + i * 2500, Data.begin() + (i + 1) * 2500, &PartialSumResult[i]);
+		Workers.push_back(std::move(Temp));
 	}
 
 	for (int i = 0; i < 4; ++i)
@@ -45,5 +50,5 @@ int main()
 		Total += PartialSumResult[i];
 	}
 
-	std::cout << "ÀüÃ¼ ÇÕ : " << Total << '\n';
+	std::cout << "ì „ì²´ í•© : " << Total << '\n';
 }
