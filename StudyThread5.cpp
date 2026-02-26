@@ -19,18 +19,18 @@ void Producer(std::queue<std::string>& DownloadedPages, std::mutex& m, int Index
 	}
 }
 
-void Consumer(std::queue<std::string>& DownloadedPages, std::mutex& m, int& NumProcessed)
+void Consumer(std::queue<std::string>& DownloadedPages, std::mutex& m, int& NumProcessed, std::condition_variable& cv)
 {
 	while (NumProcessed < 25)
 	{
-		m.lock();
-		
-		if (DownloadedPages.empty())
-		{
-			m.unlock();
+		std::unique_lock<std::mutex> lk(m);
 
-			std::this_thread::sleep_for(std::chrono::milliseconds(10));
-			continue;
+		cv.wait(lk, [&] {return !DownloadedPages.empty() || NumProcessed == 25; });
+		
+		if (NumProcessed == 25)
+		{
+			lk.unlock();
+			return;
 		}
 
 		std::string content = DownloadedPages.front();
@@ -38,7 +38,7 @@ void Consumer(std::queue<std::string>& DownloadedPages, std::mutex& m, int& NumP
 
 		++NumProcessed;
 
-		m.unlock();
+		lk.unlock();
 
 		std::cout << content;
 		std::this_thread::sleep_for(std::chrono::milliseconds(80));
@@ -49,6 +49,7 @@ int main()
 {
 	std::queue<std::string> DownloadedPages;
 	std::mutex m;
+	std::condition_variable cv;
 
 	std::vector<std::thread> Producers;
 	for (int i = 0; i < 5; ++i)
@@ -60,13 +61,16 @@ int main()
 	std::vector<std::thread> Consumers;
 	for (int i = 0; i < 3; ++i)
 	{
-		Consumers.push_back(std::thread(Consumer, std::ref(DownloadedPages), std::ref(m), std::ref(NumProcessed)));
+		Consumers.push_back(std::thread(Consumer, std::ref(DownloadedPages), std::ref(m), std::ref(NumProcessed), std::ref(cv)));
 	}
 
 	for (int i = 0; i < 5; ++i)
 	{
 		Producers[i].join();
 	}
+
+	cv.notify_all();
+
 	for (int i = 0; i < 3; ++i)
 	{
 		Consumers[i].join();
