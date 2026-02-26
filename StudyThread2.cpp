@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <thread>
 #include <vector>
 
@@ -25,5 +25,7 @@ int main()
 		Workers[i].join();
 	}
 
-	std::cout << "Counter ���� �� : " << Counter << '\n';
+	std::cout << "Counter 최종 값 : " << Counter << '\n';
+	// 나같은 경우 4만이 잘 출력되었는데, 
+	// 이는 컴파일러 최적화 때문이다.
 }
