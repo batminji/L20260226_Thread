@@ -14,7 +14,11 @@ void Worker(std::vector<int>::iterator start, std::vector<int>::iterator end, in
 	}
 	*result = Sum;
 
+	// 각 쓰레드에는 고유 아이디 번호가 할당된다! 2828 5730 4a3c 45a8
 	std::thread::id ID = std::this_thread::get_id();
+
+	// std::cout과 다르게 printf는 "..." 안에 있는 문자열을 출력할 때
+	// 컨텍스트 스위치가 되더라도 다른 쓰레드들이 그 사이에 메시지를 집어 넣을 수 없다.
 	// std::cout << "쓰래드 " << ID << "에서 " << *start << "부터" << *(end - 1) << "까지 계산한 결과 : " << Sum << '\n';
 	printf("쓰레드 %x 에서 %d 부터 %d 까지 계산한 결과 : %d \n", ID, *start,
 		*(end - 1), Sum);
