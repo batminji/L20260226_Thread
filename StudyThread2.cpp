@@ -7,9 +7,17 @@ void Worker(int& Counter, std::mutex& m)
 {
 	for (int i = 0; i < 10000; ++i)
 	{
-		m.lock();
+		// lock_guard 객체
+		// 뮤텍스를 인자로 받아서 생성하는 객체
+		// 이 객체의 생성자에서 뮤텍스를 lock 한다.
+		// lock_guard가 소멸될 때 알아서 lock 했던 뮤텍스를 unlock 하게 된다.
+
+		std::lock_guard<std::mutex> lock(m);
+		// lock 생성 시에 m.lock()을 실행한다고 보면 됨.
+		// 스코프를 빠져 나가면 lock이 소멸되면서 m이 알아서 unlock()됨.
+
 		++Counter; // 임계 영역
-		m.unlock();
+		
 		// 서로 다른 쓰레드들이 동일한 자원을 사용할 때
 		// 발생하는 문제를 경쟁 상태라고 부른다.
 		
