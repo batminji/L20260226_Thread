@@ -18,6 +18,8 @@ void Producer(std::queue<std::string>& DownloadedPages, std::mutex& m, int Index
 		m.unlock();
 
 		cv.notify_one();
+		// 모든 쓰레드들이 일을 하고 있는 상태라면 아무 일도 일어나지 않음.
+		// 조건이 거짓인 바람에 자고 있는 쓰레드 중 하나를 깨워 조건을 다시 검사하게 함.
 	}
 }
 
@@ -35,7 +37,7 @@ void Consumer(std::queue<std::string>& DownloadedPages, std::mutex& m, int& NumP
 		// 어떤 조건이 참이 될 때까지 기다릴지 조건을 인자로 전달한다.
 		// 해당 조건이 false를 return 한다면, lk를 unlock 한 뒤에 영원히 sleep한다.
 		// 해당 조건이 true라면 cv.wait는 그대로 return해서 Consumer의 content를 처리하는 부분이 그대로 실행된다.
-		cv.wait(lk, [&] {return !DownloadedPages.empty() || NumProcessed == 25; });
+		cv.wait(lk, [&]() {return !DownloadedPages.empty() || NumProcessed == 25; });
 		
 		if (NumProcessed == 25)
 		{
@@ -80,6 +82,7 @@ int main()
 	}
 
 	cv.notify_all();
+	// 모든 쓰레드를 깨워 조건을 검사하도록 함.
 
 	for (int i = 0; i < 3; ++i)
 	{
